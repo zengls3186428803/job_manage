@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        h1 {
+            margin: auto;
+            width: fit-content;
+        }
+        .course {
+            background: cyan;
+        }
+    </style>
+    <script type="text/javascript" src="https://ajax.microsoft.com/ajax/jquery/jquery-1.4.min.js"></script>
+    <script>
+        //id为服务器返回的课程id
+        function detail_jump(id) {
+            window.location.href="/jobsHandler?id=" + id;
+        }
+        $(document).ready(function () {
+            $.ajax({
+                type: "GET",
+                url: "/coursesHandler",
+                beforeSend: function () {
+                },
+                success: function (data) {
+                    //data:{"status":200/302, "courses":[courses], url:"login"}
+                    console.log(data);
+                    let json = JSON.parse(data);
+                    if(json.status === "302") {
+                        window.location.href = json.url;
+                    } else if (json.status === "200"){
+                        json = json.courses;
+                        for (let j in json) {
+                            let div = document.createElement("div");
+                            div.setAttribute("class", "course");
+                            div.setAttribute("id", json[j].id);
+                            div.setAttribute("onclick", "detail_jump('" + json[j].id + "')");
+                            let h2 = document.createElement("h2");
+                            h2.innerHTML = json[j].name;
+                            div.appendChild(h2);
+                            let li = document.createElement("li");
+                            li.appendChild(div);
+                            let ul = document.getElementById("ul_courses");
+                            ul.appendChild(li);
+                        }
+                    }
+                },
+                complete: function (XMLHttpRequest, textStatus) {
+
+                },
+                error: function (XMLHttpRequest, textStatus, thrownError) {
+                }
+            });
+        });
+    </script>
+</head>
+<body>
+<h1>本学期课程</h1>
+<div>
+    <ul id="ul_courses">
+
+    </ul>
+</div>
+</body>
+</html>

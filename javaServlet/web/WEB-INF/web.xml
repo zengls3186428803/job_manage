@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd"
+         version="4.0">
+
+    <!--    处理上传文件的表单-->
+    <servlet>
+        <servlet-name>uploadFileHandler</servlet-name>
+        <servlet-class>com.zls.project.servlet.UploadFileHandler</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>uploadFileHandler</servlet-name>
+        <url-pattern>/uploadFileHandler</url-pattern>
+    </servlet-mapping>
+
+    <!--    处理登陆的表单-->
+    <servlet>
+        <servlet-name>loginHandler</servlet-name>
+        <servlet-class>com.zls.project.servlet.LoginHandler</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>loginHandler</servlet-name>
+        <url-pattern>/loginHandler</url-pattern>
+    </servlet-mapping>
+
+    <!--    返回json数据，动态更新courses板-->
+    <servlet>
+        <servlet-name>coursesHandler</servlet-name>
+        <servlet-class>com.zls.project.servlet.CoursesHandler</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>coursesHandler</servlet-name>
+        <url-pattern>/coursesHandler</url-pattern>
+    </servlet-mapping>
+    
+<!--    返回一个html和javascript文件，让客户端动态获取作业-->
+    <servlet>
+        <servlet-name>jobsHandler</servlet-name>
+        <servlet-class>com.zls.project.servlet.JobsHandler</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>jobsHandler</servlet-name>
+        <url-pattern>/jobsHandler</url-pattern>
+    </servlet-mapping>
+
+<!--    返回json数据，让客户端动态更新作业详细内容-->
+    <servlet>
+        <servlet-name>jobContentHandler</servlet-name>
+        <servlet-class>com.zls.project.servlet.JobContentHandler</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>jobContentHandler</servlet-name>
+        <url-pattern>/jobContentHandler</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>homePageHandler</servlet-name>
+        <servlet-class>com.zls.project.servlet.HomePageHandler</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>homePageHandler</servlet-name>
+        <url-pattern>/home</url-pattern>
+    </servlet-mapping>
+
+</web-app>

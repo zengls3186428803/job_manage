@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        h2 {
+            margin: auto;
+            width: fit-content;
+        }
+
+        .div_job {
+            background: cyan;
+        }
+    </style>
+    <script type="text/javascript" src="https://ajax.microsoft.com/ajax/jquery/jquery-1.4.min.js"></script>
+    <script>
+        let target_url = "";
+        let info = [];
+        info["max_file"] = 5;
+        let map = [];//本地jid_local -> jid
+        //cid, jid, jid_local
+
+        function addUpload(job_id) {
+            //job_id 为本地编号
+            if (info[job_id]["count"] >= info["max_file"]) return;//限制最多max_file个文件框
+            info[job_id]["count"]++;
+            //自增id不同的HTML对象，并附加到容器最后
+            var newDiv = "<div id=divUpload" + "_" + job_id.toString() + "_" + info[job_id]["count"].toString() + ">"
+                + " <input name=" + map[job_id].toString() + "_" + info[job_id]["count"].toString() + " type=file>"
+                + " <button type='button' onclick=delUpload('divUpload" + "_" + job_id.toString() + "_" + info[job_id]["count"].toString() + "');>删除</button>"
+                + " </div>";
+            document.getElementById("uploadContent" + job_id).insertAdjacentHTML("beforeEnd", newDiv);
+        }
+
+        //删除指定元素
+        function delUpload(diva) {
+            let pattern = new RegExp("(?<=_).*(?=_)");
+            let job_id = parseInt(pattern.exec(diva)[0]);
+            info[job_id]["count"]--;
+            document.getElementById(diva).parentNode.removeChild(document.getElementById(diva));
+        }
+
+        $(document).ready(
+            function () {
+                $.ajax(
+                    {
+                        url: target_url,
+                        method: "get",
+                        success: function (data) {
+                            //data的json格式为'{"status":"302/200", "url":"/login", "id":"1", "course_name":"course_name","jobs":["id":"123", "content":"content"]}'
+                            let json = JSON.parse(data);
+                            document.getElementById("course_name").innerHTML = json["course_name"];
+                            json = json["jobs"];
+                            for (let j in json) {
+                                j = parseInt(j);
+                                map[j + 1] = json[j].id;
+                                info[j + 1] = [];
+                                info[j + 1]["count"] = 0;
+                                //作业标题
+                                let name_job = document.createElement("h3")
+                                name_job.innerHTML = "job" + (j + 1).toString();
+
+                                //作业内容
+                                let content = document.createElement("p")
+                                content.innerHTML = json[j].content;
+                                let div_content = document.createElement("div");
+                                div_content.appendChild(content)
+
+                                //作业表单（列表）
+                                let str_form = '<form action="/uploadFileHandler" method="post" enctype="multipart/form-data">\
+                                    <!--承接整个file文件框的HTML容器-->\
+                                    <div id="uploadContent' + (j + 1).toString() + '"' + '>\
+                                    <div id=div_default><input id=file1 type=file name=' + json[j].id + '_' + '0' + '></div>\
+                                    </div>\
+                                    <br/>\
+                                    <button type="button" onclick="addUpload(' + (j + 1).toString() + ')">添加附件</button>\
+                                    <button type="submit">提交</button>\
+                                    <br/>\
+                                </form>'
+                                let form = document.createElement("form");
+                                form.innerHTML = str_form;
+                                //通过字符串str_form设置表单属性好像没用，所以下面又设置了。
+                                form.setAttribute("action", "/uploadFileHandler");
+                                form.setAttribute("method", "POST");
+                                form.setAttribute("enctype", "multipart/form-data");
+
+                                let div_upload = document.createElement("div");
+                                div_upload.appendChild(form);
+
+                                let div1 = document.createElement("div");
+                                div1.appendChild(name_job);
+                                div1.appendChild(div_content);
+                                div1.appendChild(div_upload)
+                                div1.setAttribute("class", "div_job");
+
+                                let li_job_content = document.createElement("li");
+                                li_job_content.appendChild(div1);
+
+                                let ul = document.getElementById("ul_jobs");
+                                ul.appendChild(li_job_content);
+                            }
+                        }
+                    }
+                );
+            }
+        );
+    </script>
+</head>
+<body>
+<h2 id="course_name"></h2>
+<div>
+    <ul id="ul_jobs">
+    </ul>
+</div>
+</body>
+</html>
