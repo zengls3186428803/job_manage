@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>提交状况</title>
+    <script type="text/javascript" src="https://ajax.microsoft.com/ajax/jquery/jquery-1.4.min.js"></script>
+    <script>
+        function download_by_jid(jid) {
+
+        }
+        function delete_by_jid(jid) {
+
+        }
+
+
+        let jid = "";
+        $(document).ready(
+            function () {
+                $.ajax(
+                    {
+                        url:"/seeSubmitContentHandler",
+                        type:"get",
+                        async:true,
+                        "X-Requested-With":null,
+                        success:function (data, status, xhr) {
+                            data = '[{"filename":"2020013218zeng"}]';
+                            let json = JSON.parse(data);
+                            for(let j in json){
+                                let div1 = document.createElement("div");
+                                let span = document.createElement("span");
+                                span.innerHTML = json[j].filename;
+                                let button_download = document.createElement("button");
+                                button_download.setAttribute("type","button");
+                                button_download.setAttribute("onclick","download(\"" + json[j].id + "\")");
+                                button_download.innerHTML="下载";
+                                let button_delete = document.createElement("button");
+                                button_delete.setAttribute("type","button");
+                                button_delete.setAttribute("onclick","delete(\"" + json[j].id + "\")");
+                                button_delete.innerHTML="删除";
+                                div1.appendChild(span);
+                                div1.appendChild(button_download);
+                                div1.appendChild(button_delete);
+
+
+                                let li = document.createElement("li");
+                                li.appendChild(div1);
+
+                                document.getElementById("has_submit").appendChild(li);
+                            }
+                        }
+                    }
+                )
+            }
+        )
+    </script>
+</head>
+<body>
+<div>
+    <h2>已提交<h2>
+        <ul id="has_submit">
+
+        </ul>
+</div>
+</body>
+</html>

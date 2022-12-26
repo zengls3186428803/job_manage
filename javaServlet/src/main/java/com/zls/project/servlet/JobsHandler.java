@@ -45,9 +45,8 @@ public class JobsHandler extends HttpServlet {
                             }
                             String[] parameterValues = request.getParameterValues(parameterName);
                             String id = parameterValues[0];
-                            File file = new File("/home/zengls/IdeaProjects/javaWeb/javaServlet/web/jobs/index.html");
+                            File file = new File(request.getServletContext().getRealPath("/") + "/jobs/index.html");
 
-//                          File file = new File("/home/zengls/IdeaProjects/javaWeb/javaServlet/web/details/index.html");
                             FileInputStream io = new FileInputStream(file);
                             ByteArrayOutputStream os = new ByteArrayOutputStream();
                             byte[] buf = new byte[10240];

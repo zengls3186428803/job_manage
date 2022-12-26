@@ -25,11 +25,21 @@
             if (info[job_id]["count"] >= info["max_file"]) return;//限制最多max_file个文件框
             info[job_id]["count"]++;
             //自增id不同的HTML对象，并附加到容器最后
-            var newDiv = "<div id=divUpload" + "_" + job_id.toString() + "_" + info[job_id]["count"].toString() + ">"
-                + " <input name=" + map[job_id].toString() + "_" + info[job_id]["count"].toString() + " type=file>"
-                + " <button type='button' onclick=delUpload('divUpload" + "_" + job_id.toString() + "_" + info[job_id]["count"].toString() + "');>删除</button>"
-                + " </div>";
-            document.getElementById("uploadContent" + job_id).insertAdjacentHTML("beforeEnd", newDiv);
+
+            let div = document.createElement("div");
+            let div_id = "divUpload_" + job_id.toString() + "_" + info[job_id]["count"].toString();
+            div.setAttribute("id", div_id);
+            let input = document.createElement("input");
+            input.setAttribute("name", map[job_id].toString() + "_" + info[job_id]["count"].toString());
+            input.setAttribute("type", "file");
+            let button = document.createElement("button");
+            button.setAttribute("type", "button");
+            button.setAttribute("onclick", "delUpload(\"" + div_id + "\")");
+            button.innerHTML = "删除";
+            div.appendChild(input);
+            div.appendChild(button);
+            document.getElementById("uploadContent" + job_id).appendChild(div);
+            // document.getElementById("uploadContent" + job_id).insertAdjacentHTML("beforeEnd", div);
         }
 
         //删除指定元素
@@ -40,6 +50,10 @@
             document.getElementById(diva).parentNode.removeChild(document.getElementById(diva));
         }
 
+        function see_submit(jid) {
+            window.location.href="seeSubmitHandler?id=" + jid;
+        }
+
         $(document).ready(
             function () {
                 $.ajax(
@@ -47,7 +61,7 @@
                         url: target_url,
                         method: "get",
                         success: function (data) {
-                            //data的json格式为'{"status":"302/200", "url":"/login", "id":"1", "course_name":"course_name","jobs":["id":"123", "content":"content"]}'
+                            //data的json格式为'{"status":"302/200", "url":"/login", "id":"1", "course_name":"course_name","jobs":[{"id":"123", "content":"content"}]}'
                             let json = JSON.parse(data);
                             document.getElementById("course_name").innerHTML = json["course_name"];
                             json = json["jobs"];
@@ -66,20 +80,33 @@
                                 let div_content = document.createElement("div");
                                 div_content.appendChild(content)
 
-                                //作业表单（列表）
-                                let str_form = '<form action="/uploadFileHandler" method="post" enctype="multipart/form-data">\
-                                    <!--承接整个file文件框的HTML容器-->\
-                                    <div id="uploadContent' + (j + 1).toString() + '"' + '>\
-                                    <div id=div_default><input id=file1 type=file name=' + json[j].id + '_' + '0' + '></div>\
-                                    </div>\
-                                    <br/>\
-                                    <button type="button" onclick="addUpload(' + (j + 1).toString() + ')">添加附件</button>\
-                                    <button type="submit">提交</button>\
-                                    <br/>\
-                                </form>'
+                                //提交作业的表单
                                 let form = document.createElement("form");
-                                form.innerHTML = str_form;
-                                //通过字符串str_form设置表单属性好像没用，所以下面又设置了。
+                                //提交作业的大div
+                                let div_upload_content = document.createElement("div");
+                                div_upload_content.setAttribute("id", "uploadContent" + (j + 1).toString());
+                                let div_default = document.createElement("div");
+
+                                //默认的提交文件的div
+                                div_default.setAttribute("id", "div_default");
+                                let input = document.createElement("input");
+                                input.setAttribute("type", "file");
+                                input.setAttribute("name", json[j].id + "_" + "0");
+                                div_default.appendChild(input);
+
+                                div_upload_content.append(div_default);
+                                let button_add_file = document.createElement("button");
+                                button_add_file.setAttribute("type", "button");
+                                button_add_file.setAttribute("onclick", "addUpload(\"" + (j + 1).toString() + "\")");
+                                button_add_file.innerHTML = "添加附件";
+                                let button_submit = document.createElement("button");
+                                button_submit.setAttribute("type", "submit");
+                                button_submit.innerHTML = "提交";
+
+                                form.appendChild(div_upload_content);
+                                form.appendChild(document.createElement("br"));
+                                form.appendChild(button_add_file);
+                                form.appendChild(button_submit);
                                 form.setAttribute("action", "/uploadFileHandler");
                                 form.setAttribute("method", "POST");
                                 form.setAttribute("enctype", "multipart/form-data");
@@ -87,17 +114,23 @@
                                 let div_upload = document.createElement("div");
                                 div_upload.appendChild(form);
 
+                                let button_see = document.createElement("button");
+                                button_see.setAttribute("type", "button");
+                                button_see.setAttribute("onclick", "see_submit(" + json.id +")");
+                                button_see.innerHTML="查看已提交的文件"
+
                                 let div1 = document.createElement("div");
                                 div1.appendChild(name_job);
                                 div1.appendChild(div_content);
                                 div1.appendChild(div_upload)
                                 div1.setAttribute("class", "div_job");
+                                div1.appendChild(button_see);
 
-                                let li_job_content = document.createElement("li");
-                                li_job_content.appendChild(div1);
+                                let li = document.createElement("li");
+                                li.appendChild(div1);
 
                                 let ul = document.getElementById("ul_jobs");
-                                ul.appendChild(li_job_content);
+                                ul.appendChild(li);
                             }
                         }
                     }

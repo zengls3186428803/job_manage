@@ -62,5 +62,23 @@
         <servlet-name>homePageHandler</servlet-name>
         <url-pattern>/home</url-pattern>
     </servlet-mapping>
+    
+    <servlet>
+        <servlet-name>filterHandler</servlet-name>
+        <servlet-class>com.zls.project.servlet.FilterHandler</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>filterHandler</servlet-name>
+        <url-pattern>/resource_upload/*</url-pattern>
+    </servlet-mapping>
+    
+    <servlet>
+        <servlet-name>seeSubmitContentHandler</servlet-name>
+        <servlet-class>com.zls.project.servlet.SeeSubmitContentHandler</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>seeSubmitContentHandler</servlet-name>
+        <url-pattern>/seeSubmitContentHandler</url-pattern>
+    </servlet-mapping>
 
 </web-app>
